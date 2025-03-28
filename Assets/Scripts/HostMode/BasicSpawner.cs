@@ -9,11 +9,11 @@ using UnityEngine.SceneManagement;
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private NetworkPrefabRef _playerPrefab;
-    [SerializeField] private CameraFollow _cameraFollow;
+    [SerializeField] private CameraFollowNetwork _cameraFollow;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
 
-    internal static UnityAction<PrometeoCarController> LocalPlayerSpawned;
+    internal static UnityAction<PrometeoCarControllerNetwork> LocalPlayerSpawned;
 
     async void StartGame(GameMode mode)
     {

@@ -9,12 +9,11 @@ something useful for your game. Best regards, Mena.
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PrometeoCarController : MonoBehaviour
+public class PrometeoCarControllerNetwork : NetworkBehaviour
 {
 
     //CAR SETUP
@@ -143,7 +142,7 @@ public class PrometeoCarController : MonoBehaviour
       float localVelocityZ;
       float localVelocityX;
       bool deceleratingCar;
-      bool touchControlsSetup = false;
+      //bool touchControlsSetup = false;
       /*
       The following variables are used to store information about sideways friction of the wheels (such as
       extremumSlip,extremumValue, asymptoteSlip, asymptoteValue and stiffness). We change this values to
@@ -158,8 +157,8 @@ public class PrometeoCarController : MonoBehaviour
       WheelFrictionCurve RRwheelFriction;
       float RRWextremumSlip;
 
-    // Start is called before the first frame update
-    void Start()
+    // Start
+    public override void Spawned()
     {
       //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
       //gameObject. Also, we define the center of mass of the car with the Vector3 given
@@ -207,16 +206,16 @@ public class PrometeoCarController : MonoBehaviour
         // We invoke 2 methods inside this script. CarSpeedUI() changes the text of the UI object that stores
         // the speed of the car and CarSounds() controls the engine and drifting sounds. Both methods are invoked
         // in 0 seconds, and repeatedly called every 0.1 seconds.
-        if(useUI){
-          InvokeRepeating("CarSpeedUI", 0f, 0.1f);
-        }else if(!useUI){
-          if(carSpeedText != null){
-            carSpeedText.text = "0";
-          }
-        }
+        //if(useUI){
+        //  InvokeRepeating(nameof(CarSpeedUI), 0f, 0.1f);
+        //}else if(!useUI){
+        //  if(carSpeedText != null){
+        //    carSpeedText.text = "0";
+        //  }
+        //}
 
         if(useSounds){
-          InvokeRepeating("CarSounds", 0f, 0.1f);
+          InvokeRepeating(nameof(CarSounds), 0f, 0.1f);
         }else if(!useSounds){
           if(carEngineSound != null){
             carEngineSound.Stop();
@@ -241,31 +240,45 @@ public class PrometeoCarController : MonoBehaviour
           }
         }
 
-        if(useTouchControls){
-          if(throttleButton != null && reverseButton != null &&
-          turnRightButton != null && turnLeftButton != null
-          && handbrakeButton != null){
+        //if(useTouchControls){
+        //  if(throttleButton != null && reverseButton != null &&
+        //  turnRightButton != null && turnLeftButton != null
+        //  && handbrakeButton != null){
 
-            throttlePTI = throttleButton.GetComponent<PrometeoTouchInput>();
-            reversePTI = reverseButton.GetComponent<PrometeoTouchInput>();
-            turnLeftPTI = turnLeftButton.GetComponent<PrometeoTouchInput>();
-            turnRightPTI = turnRightButton.GetComponent<PrometeoTouchInput>();
-            handbrakePTI = handbrakeButton.GetComponent<PrometeoTouchInput>();
-            touchControlsSetup = true;
+        //    throttlePTI = throttleButton.GetComponent<PrometeoTouchInput>();
+        //    reversePTI = reverseButton.GetComponent<PrometeoTouchInput>();
+        //    turnLeftPTI = turnLeftButton.GetComponent<PrometeoTouchInput>();
+        //    turnRightPTI = turnRightButton.GetComponent<PrometeoTouchInput>();
+        //    handbrakePTI = handbrakeButton.GetComponent<PrometeoTouchInput>();
+        //    touchControlsSetup = true;
 
-          }else{
-            String ex = "Touch controls are not completely set up. You must drag and drop your scene buttons in the" +
-            " PrometeoCarController component.";
-            Debug.LogWarning(ex);
-          }
-        }
+        //  }else{
+        //    String ex = "Touch controls are not completely set up. You must drag and drop your scene buttons in the" +
+        //    " PrometeoCarController component.";
+        //    Debug.LogWarning(ex);
+        //  }
+        //}
 
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnGUI()
     {
+        if (!Object.HasInputAuthority) return;
+        GUI.Label(new Rect(200, 0, 200, 40), $"Staste Auth: {Object.HasStateAuthority}");
 
+        GUI.Label(new Rect(300, 0, 200, 40), $"RPM: {frontLeftCollider.rpm}");
+        GUI.Label(new Rect(300, 40, 200, 40), $"Speed: {carSpeed}");
+        GUI.Label(new Rect(300, 80, 200, 40), $"RB Vel: {carRigidbody.linearVelocity.magnitude}");
+        GUI.Label(new Rect(300, 120, 200, 40), $"acc: {input.accelerate}");
+        GUI.Label(new Rect(300, 160, 200, 40), $"decc: {input.decelerate}");
+        GUI.Label(new Rect(300, 200, 200, 40), $"hb: {input.handBrakeOn}");
+    }
+
+    internal NetworkInputData input;
+
+    // Update is called once per frame
+    public override void FixedUpdateNetwork()
+    {
       //CAR DATA
 
       // We determine the speed of the car.
@@ -287,82 +300,139 @@ public class PrometeoCarController : MonoBehaviour
       In this part of the code we specify what the car needs to do if the user presses W (throttle), S (reverse),
       A (turn left), D (turn right) or Space bar (handbrake).
       */
-      if (useTouchControls && touchControlsSetup){
+      // if (useTouchControls && touchControlsSetup)
+      // {
+      //
+      //   if(throttlePTI.buttonPressed){
+      //     CancelInvoke(nameof(DecelerateCar));
+      //     deceleratingCar = false;
+      //     GoForward();
+      //   }
+      //   if(reversePTI.buttonPressed){
+      //     CancelInvoke(nameof(DecelerateCar));
+      //     deceleratingCar = false;
+      //     GoReverse();
+      //   }
+      //
+      //   if(turnLeftPTI.buttonPressed){
+      //     TurnLeft();
+      //   }
+      //   if(turnRightPTI.buttonPressed){
+      //     TurnRight();
+      //   }
+      //   if(handbrakePTI.buttonPressed){
+      //     CancelInvoke(nameof(DecelerateCar));
+      //     deceleratingCar = false;
+      //     Handbrake();
+      //   }
+      //   if(!handbrakePTI.buttonPressed){
+      //     RecoverTraction();
+      //   }
+      //   if((!throttlePTI.buttonPressed && !reversePTI.buttonPressed)){
+      //     ThrottleOff();
+      //   }
+      //   if((!reversePTI.buttonPressed && !throttlePTI.buttonPressed) && !handbrakePTI.buttonPressed && !deceleratingCar){
+      //     InvokeRepeating(nameof(DecelerateCar), 0f, 0.1f);
+      //     deceleratingCar = true;
+      //   }
+      //   if(!turnLeftPTI.buttonPressed && !turnRightPTI.buttonPressed && steeringAxis != 0f){
+      //     ResetSteeringAngle();
+      //   }
+      //
+      // }
+      // else
+      // {
+      //
+      //   if(Input.GetKey(KeyCode.W))
+      //   {
+      //     CancelInvoke(nameof(DecelerateCar));
+      //     deceleratingCar = false;
+      //     GoForward();
+      //   }
+      //   if(Input.GetKey(KeyCode.S))
+      //   {
+      //     CancelInvoke(nameof(DecelerateCar));
+      //     deceleratingCar = false;
+      //     GoReverse();
+      //   }
+      //
+      //   if(Input.GetKey(KeyCode.A))
+      //   {
+      //     TurnLeft();
+      //   }
+      //   if(Input.GetKey(KeyCode.D))
+      //   {
+      //     TurnRight();
+      //   }
+      //   if(Input.GetKey(KeyCode.Space))
+      //   {
+      //     CancelInvoke(nameof(DecelerateCar));
+      //     deceleratingCar = false;
+      //     Handbrake();
+      //   }
+      //   if(Input.GetKeyUp(KeyCode.Space))
+      //   {
+      //     RecoverTraction();
+      //   }
+      //   if((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)))
+      //   {
+      //     ThrottleOff();
+      //   }
+      //   if((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) && !Input.GetKey(KeyCode.Space) && !deceleratingCar)
+      //   {
+      //     InvokeRepeating(nameof(DecelerateCar), 0f, 0.1f);
+      //     deceleratingCar = true;
+      //   }
+      //   if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && steeringAxis != 0f)
+      //   {
+      //     ResetSteeringAngle();
+      //   }
+      //
+      // }
+      
+      if(input.accelerate)
+      {
+        CancelInvoke(nameof(DecelerateCar));
+        deceleratingCar = false;
+        GoForward();
+      }
+      if(input.decelerate)
+      {
+        CancelInvoke(nameof(DecelerateCar));
+        deceleratingCar = false;
+        GoReverse();
+      }
 
-        if(throttlePTI.buttonPressed){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoForward();
-        }
-        if(reversePTI.buttonPressed){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoReverse();
-        }
-
-        if(turnLeftPTI.buttonPressed){
-          TurnLeft();
-        }
-        if(turnRightPTI.buttonPressed){
-          TurnRight();
-        }
-        if(handbrakePTI.buttonPressed){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          Handbrake();
-        }
-        if(!handbrakePTI.buttonPressed){
-          RecoverTraction();
-        }
-        if((!throttlePTI.buttonPressed && !reversePTI.buttonPressed)){
-          ThrottleOff();
-        }
-        if((!reversePTI.buttonPressed && !throttlePTI.buttonPressed) && !handbrakePTI.buttonPressed && !deceleratingCar){
-          InvokeRepeating("DecelerateCar", 0f, 0.1f);
-          deceleratingCar = true;
-        }
-        if(!turnLeftPTI.buttonPressed && !turnRightPTI.buttonPressed && steeringAxis != 0f){
-          ResetSteeringAngle();
-        }
-
-      }else{
-
-        if(Input.GetKey(KeyCode.W)){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoForward();
-        }
-        if(Input.GetKey(KeyCode.S)){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoReverse();
-        }
-
-        if(Input.GetKey(KeyCode.A)){
-          TurnLeft();
-        }
-        if(Input.GetKey(KeyCode.D)){
-          TurnRight();
-        }
-        if(Input.GetKey(KeyCode.Space)){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          Handbrake();
-        }
-        if(Input.GetKeyUp(KeyCode.Space)){
-          RecoverTraction();
-        }
-        if((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))){
-          ThrottleOff();
-        }
-        if((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) && !Input.GetKey(KeyCode.Space) && !deceleratingCar){
-          InvokeRepeating("DecelerateCar", 0f, 0.1f);
-          deceleratingCar = true;
-        }
-        if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && steeringAxis != 0f){
-          ResetSteeringAngle();
-        }
-
+      if(input.steerLeft)
+      {
+        TurnLeft();
+      }
+      if(input.steerRight)
+      {
+        TurnRight();
+      }
+      if(input.handBrakeOn)
+      {
+        CancelInvoke(nameof(DecelerateCar));
+        deceleratingCar = false;
+        Handbrake();
+      }
+      if(input.handBrakeOff)
+      {
+        RecoverTraction();
+      }
+      if((!input.decelerate && !input.accelerate))
+      {
+        ThrottleOff();
+      }
+      if((!input.decelerate && !input.accelerate) && !input.handBrakeOn && !deceleratingCar)
+      {
+        InvokeRepeating(nameof(DecelerateCar), 0f, 0.1f);
+        deceleratingCar = true;
+      }
+      if(!input.steerLeft && !input.steerRight && steeringAxis != 0f)
+      {
+        ResetSteeringAngle();
       }
 
 
@@ -372,18 +442,18 @@ public class PrometeoCarController : MonoBehaviour
     }
 
     // This method converts the car speed data from float to string, and then set the text of the UI carSpeedText with this value.
-    public void CarSpeedUI(){
+    //public void CarSpeedUI(){
 
-      if(useUI){
-          try{
-            float absoluteCarSpeed = Mathf.Abs(carSpeed);
-            carSpeedText.text = Mathf.RoundToInt(absoluteCarSpeed).ToString();
-          }catch(Exception ex){
-            Debug.LogWarning(ex);
-          }
-      }
+    //  if(useUI){
+    //      try{
+    //        float absoluteCarSpeed = Mathf.Abs(carSpeed);
+    //        carSpeedText.text = Mathf.RoundToInt(absoluteCarSpeed).ToString();
+    //      }catch(Exception ex){
+    //        Debug.LogWarning(ex);
+    //      }
+    //  }
 
-    }
+    //}
 
     // This method controls the car sounds. For example, the car engine will sound slow when the car speed is low because the
     // pitch of the sound will be at its lowest point. On the other hand, it will sound fast when the car speed is high because
@@ -623,7 +693,7 @@ public class PrometeoCarController : MonoBehaviour
       // also cancel the invoke of this method.
       if(carRigidbody.linearVelocity.magnitude < 0.25f){
         carRigidbody.linearVelocity = Vector3.zero;
-        CancelInvoke("DecelerateCar");
+        CancelInvoke(nameof(DecelerateCar));
       }
     }
 
@@ -639,7 +709,7 @@ public class PrometeoCarController : MonoBehaviour
     // will depend on the handbrakeDriftMultiplier variable. If this value is small, then the car will not drift too much, but if
     // it is high, then you could make the car to feel like going on ice.
     public void Handbrake(){
-      CancelInvoke("RecoverTraction");
+      CancelInvoke(nameof(RecoverTraction));
       // We are going to start losing traction smoothly, there is were our 'driftingAxis' variable takes
       // place. This variable will start from 0 and will reach a top value of 1, which means that the maximum
       // drifting value has been reached. It will increase smoothly by using the variable Time.deltaTime.
@@ -752,7 +822,7 @@ public class PrometeoCarController : MonoBehaviour
         RRwheelFriction.extremumSlip = RRWextremumSlip * handbrakeDriftMultiplier * driftingAxis;
         rearRightCollider.sidewaysFriction = RRwheelFriction;
 
-        Invoke("RecoverTraction", Time.deltaTime);
+        Invoke(nameof(RecoverTraction), Time.deltaTime);
 
       }else if (FLwheelFriction.extremumSlip < FLWextremumSlip){
         FLwheelFriction.extremumSlip = FLWextremumSlip;

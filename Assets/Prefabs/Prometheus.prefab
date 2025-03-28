@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 627556911}
   - component: {fileID: 1687391273347518956}
   - component: {fileID: -998064814045408781}
-  - component: {fileID: -285380156681247803}
+  - component: {fileID: -5551808212852775222}
   m_Layer: 0
   m_Name: Prometheus
   m_TagString: Untagged
@@ -311,9 +311,9 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 627556911}
   - {fileID: 1687391273347518956}
-  - {fileID: -285380156681247803}
+  - {fileID: -5551808212852775222}
   ForceRemoteRenderTimeframe: 0
---- !u!114 &-285380156681247803
+--- !u!114 &-5551808212852775222
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

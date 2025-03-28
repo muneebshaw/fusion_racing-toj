@@ -2,11 +2,11 @@ using Fusion;
 
 public class NetworkPlayer : NetworkBehaviour
 {
-    private PrometeoCarController _cc;
+    private PrometeoCarControllerNetwork _cc;
 
     public override void Spawned()
     {
-        _cc = GetComponent<PrometeoCarController>();
+        _cc = GetComponent<PrometeoCarControllerNetwork>();
         // if I'm the local player
         if (Object.HasInputAuthority)
         {

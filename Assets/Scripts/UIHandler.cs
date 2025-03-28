@@ -6,7 +6,7 @@ namespace Racing
     public class UIHandler : MonoBehaviour
     {
         [SerializeField] private Text speedText;
-        private PrometeoCarController carController;
+        private PrometeoCarControllerNetwork carController;
 
         private void Update()
         {
@@ -26,7 +26,7 @@ namespace Racing
             BasicSpawner.LocalPlayerSpawned -= OnLocalPlayerSpawned;
         }
 
-        private void OnLocalPlayerSpawned(PrometeoCarController _carController)
+        private void OnLocalPlayerSpawned(PrometeoCarControllerNetwork _carController)
         {
             carController = _carController;
         }
