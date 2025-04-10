@@ -158,7 +158,6 @@ public class UIManager : MonoBehaviour
 
     internal void UpdateReadyPlayers()
     {
-        Debug.Log("UpdateReadyPlayers");
         foreach (var entry in readyPlayerEntries)
         {
             //bool isReady = RaceManager.Instance.ReadyPlayers.Get(_localPlayerRef);

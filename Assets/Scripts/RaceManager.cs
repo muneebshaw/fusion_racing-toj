@@ -6,7 +6,6 @@ public enum RaceState { Lobby, Countdown, Racing, Finished }
 
 public class RaceManager : NetworkBehaviour
 {
-    public static RaceManager Instance { get; private set; }
 
     [Networked] public RaceState CurrentState { get; set; }
     [Networked] public float CountdownTimer { get; set; }
@@ -25,13 +24,19 @@ public class RaceManager : NetworkBehaviour
 
     internal bool IsSpawned = false;
 
-    private void Awake()
-    {
-        if (Instance == null) Instance = this;
-    }
+    public static RaceManager Instance { get; private set; }
+
+    internal static bool IsHost;
 
     public override void Spawned()
     {
+        IsHost = Runner.IsSharedModeMasterClient;
+
+        //if (Runner.IsSharedModeMasterClient)
+        {
+            Instance = this;
+        }
+
         IsSpawned = true;
         _finishLine = GameObject.FindGameObjectWithTag("FinishLine").transform;
     }
@@ -82,11 +87,14 @@ public class RaceManager : NetworkBehaviour
 
     private void OnGUI()
     {
-        if (Runner.IsSharedModeMasterClient)
+        if (Runner && Runner.IsSharedModeMasterClient)
         {
+            var readyPlayers = ReadyPlayers.Where(p => p.Value).Select(p => p.Key.PlayerId).ToList();
+
             GUI.Label(new Rect(400, 10, 300, 20), $"CurrentState: {CurrentState}");
-            GUI.Label(new Rect(400, 50, 300, 20), $"ReadyPlayers: {ReadyPlayers.Count}");
+            GUI.Label(new Rect(400, 50, 300, 20), $"ReadyPlayers: {readyPlayers.Count}");
             GUI.Label(new Rect(400, 90, 300, 20), $"Runner.ActivePlayers: {Runner.ActivePlayers.Count()}");
+            GUI.Label(new Rect(400, 130, 300, 20), $"FinishTimes: {FinishTimes.Count}");
         }
     }
 
@@ -102,7 +110,29 @@ public class RaceManager : NetworkBehaviour
 
     private void CheckRaceEnd()
     {
-        bool allFinished = ReadyPlayers.All(p => FinishTimes.Get(p.Key)> 0);
+        //allFinished = ReadyPlayers.All(p => FinishTimes.Get(p.Key)> 0);
+
+        bool allFinished = true;
+        foreach (var player in ReadyPlayers)
+        {
+            if (FinishTimes.TryGet(player.Key, out float time))
+            {
+                if (time <= 0)
+                {
+                    allFinished = false;
+                    break;
+                }
+            }
+            else
+            {
+                allFinished = false;
+                break;
+            }
+        }
+
+        //bool allFinished = FinishTimes.Count == Runner.ActivePlayers.Count() && FinishTimes.All(p => p.Value > 0);
+
+
         bool timeExpired = RaceTimer <= 0;
 
         if (allFinished || timeExpired)
@@ -114,25 +144,23 @@ public class RaceManager : NetworkBehaviour
     }
 
 
-    [Rpc(sources: RpcSources.All, targets: RpcTargets.StateAuthority)]
-    public void RPC_RegisterPlayer(PlayerRef player)
+    internal void RegisterPlayer(PlayerRef player)
     {
         Debug.Log($"RPC_RegisterPlayer {player.PlayerId}");
         FinishTimes.Set(player, 0);
         ReadyPlayers.Set(player, false);
     }
 
-    [Rpc(sources: RpcSources.All, targets: RpcTargets.StateAuthority)]
-    public void RPC_SetPlayerReady(PlayerRef player, bool isReady)
+    internal void SetPlayerReady(PlayerRef player, bool isReady)
     {
-        Debug.LogError($"RPC_SetPlayerReady");
         ReadyPlayers.Set(player, isReady);
-        Debug.Log($"RPC_SetPlayerReady: {player} IsReady:{ReadyPlayers.Get(player)}");
+        Debug.Log($"SetPlayerReady: {player} IsReady:{ReadyPlayers.Get(player)}");
     }
 
-    [Rpc(sources: RpcSources.All, targets: RpcTargets.StateAuthority)]
-    public void RPC_RegisterFinish(PlayerRef player)
+    //[Rpc(sources: RpcSources.All, targets: RpcTargets.StateAuthority)]
+    internal void RegisterFinish(PlayerRef player)
     {
+        Debug.LogError($"RegisterFinish {player.PlayerId}");
         FinishTimes.Set(player, _raceDuration - RaceTimer);
     }
 
@@ -148,6 +176,7 @@ public class RaceManager : NetworkBehaviour
     [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     private void RPC_StopAllCars()
     {
+        Debug.LogError($"RPC_StopAllCars");
         foreach (var player in FindObjectsByType<NetworkPlayer>(FindObjectsSortMode.None))
         {
             player.carController.SetInputEnabled(false);

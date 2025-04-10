@@ -8,6 +8,12 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void ReadinessChanged()
     {
+        if (RaceManager.IsHost)
+        {
+            Debug.Log($"ReadinessChanged: {Object.InputAuthority} IsReady:{IsReady}");
+            RaceManager.Instance.SetPlayerReady(Object.InputAuthority, IsReady);
+        }
+
         UIManager.Instance.UpdateReadyPlayers();
     }
 
@@ -25,7 +31,8 @@ public class NetworkPlayer : NetworkBehaviour
             PlayerName = "Player" + Runner.LocalPlayer.PlayerId;
             CameraFollow.instance.SetUp(transform.GetChild(0));
 
-            RaceManager.Instance.RPC_RegisterPlayer(Object.InputAuthority);
+            //RaceManager.Instance.RegisterPlayer(Object.InputAuthority);
+            RPC_RequestRegistration(Object.InputAuthority);
             carController.SetInputEnabled(false);
         }
 
@@ -35,10 +42,12 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!HasStateAuthority) return; // only allow the local player to trigger the finish line
+
         if (other.CompareTag("FinishLine"))
         {
-            Debug.Log($"{PlayerName} finished!");
-            RaceManager.Instance.RPC_RegisterFinish(Object.InputAuthority);
+            //RaceManager.Instance.RPC_RegisterFinish(Object.InputAuthority);
+            RPC_RequestFinish(Object.InputAuthority);
         }
     }
 
@@ -56,6 +65,42 @@ public class NetworkPlayer : NetworkBehaviour
     internal void SetReady(bool _isReady)
     {
         IsReady = _isReady;
-        RaceManager.Instance.RPC_SetPlayerReady(Object.InputAuthority, _isReady);
+        //RaceManager.Instance.RPC_SetPlayerReady(Object.InputAuthority, _isReady);
+        Debug.Log($"SetReady: {_isReady}");
+        //RPC_RequestReadinessChange(Object.InputAuthority, _isReady);
     }
+
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    public void RPC_RequestRegistration(PlayerRef player)
+    {
+        // Host receives this RPC and registers the player via RaceManager
+        Debug.LogError($"RPC_RequestRegistration: {player} PlayerName:{PlayerName}");
+        if (RaceManager.IsHost)
+        {
+            Debug.LogError($"RPC_RequestRegistration2: {player} PlayerName:{PlayerName}");
+            RaceManager.Instance.RegisterPlayer(player);
+        }
+    }
+
+    //[Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+    //public void RPC_RequestReadinessChange(PlayerRef player, bool _isReady)
+    //{
+    //    Debug.LogError($"RPC_RequestReadinessChange: {player} IsReady:{_isReady}");
+    //    if (RaceManager.Instance != null)
+    //    {
+    //        Debug.LogError($"RPC_RequestReadinessChange2: {player} IsReady:{_isReady}");
+    //        RaceManager.Instance.RPC_SetPlayerReady(player, _isReady);
+    //    }
+    //}
+
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    public void RPC_RequestFinish(PlayerRef player)
+    {
+        Debug.LogError($"RPC_RequestFinish: {PlayerName}");
+        if (RaceManager.IsHost)
+        {
+            RaceManager.Instance.RegisterFinish(player);
+        }
+    }
+
 }
