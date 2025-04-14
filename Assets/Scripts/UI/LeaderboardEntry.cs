@@ -15,7 +15,13 @@ public class LeaderboardEntry : MonoBehaviour
         _nameText.text = playerName;
         _timeText.text = time;
         if (isLocal)
+        {
             _background.color = Color.red;
+        }
+        else
+        {
+            _background.color = Color.white;
+        }
     }
 
     //internal void UpdatePosition(int newPosition)

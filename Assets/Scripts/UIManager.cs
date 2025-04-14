@@ -35,16 +35,36 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         RaceEvents.OnRaceStart += RaceStarted;
+        RaceEvents.OnRaceEnd += RaceEnd;
     }
 
     private void OnDisable()
     {
         RaceEvents.OnRaceStart -= RaceStarted;
+        RaceEvents.OnRaceEnd -= RaceEnd;
     }
 
     private void RaceStarted()
     {
         //
+    }
+
+    private void RaceEnd()
+    {
+        _finishPanel.SetActive(RaceManager.Instance.CurrentState == RaceState.Finished);
+        _leaderboardContent.SetParent(_finishPanel.transform);
+    }
+
+    public void HandleRestartButton() // called from UI
+    {
+        // unload all scenes
+        //SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+
+        // unload Don'tDestroyOnLoad objects
+
+
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
     private void Update()
@@ -91,13 +111,7 @@ public class UIManager : MonoBehaviour
         {
             var entry = _entries[i];
             bool isLocal = players[i] == _localNetworkPlayer.Object.InputAuthority;
-
-            entry.Setup(
-                position: i + 1,
-                playerName: $"Player {players[i].PlayerId}",
-                time: GetPlayerTime(players[i]),
-                isLocal: isLocal
-            );
+            entry.Setup(i + 1, $"Player {players[i].PlayerId}", GetPlayerTime(players[i]), isLocal);
         }
     }
 
@@ -134,7 +148,7 @@ public class UIManager : MonoBehaviour
     {
         if (RaceManager.Instance.FinishTimes.TryGet(player, out float time))
         {
-            return time.ToString("F1");
+            if (time > 0) return time.ToString("F1");
         }
         return (RaceManager.Instance._raceDuration - RaceManager.Instance.RaceTimer).ToString("F1");
     }
