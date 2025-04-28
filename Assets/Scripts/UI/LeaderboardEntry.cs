@@ -9,9 +9,9 @@ public class LeaderboardEntry : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _progressText;
     [SerializeField] private Image _background;
 
-    public void Setup(int position, string playerName, string progress, bool isLocal = default)
+    public void Setup(/*int position, */string playerName, /*string progress,*/ bool isLocal = default)
     {
-        _positionText.text = position.ToString();
+        //_positionText.text = position.ToString();
         _nameText.text = playerName;
         //_progressText.text = progress;
         if (isLocal)
@@ -29,4 +29,9 @@ public class LeaderboardEntry : MonoBehaviour
     //    _positionText.text = newPosition.ToString();
     //    transform.SetSiblingIndex(newPosition - 1);
     //}
+
+    internal void UpdateProgress(string progress)
+    {
+        _progressText.text = progress;
+    }
 }

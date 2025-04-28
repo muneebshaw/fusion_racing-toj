@@ -7,6 +7,7 @@ public class NetworkPlayer : NetworkBehaviour
     [Networked, OnChangedRender(nameof(ReadinessChanged))] public bool IsReady { get; set; }
 
     [SerializeField] private TextMeshProUGUI progressText;
+    private LeaderboardEntry leaderboardEntry;
 
     private void ReadinessChanged()
     {
@@ -24,6 +25,7 @@ public class NetworkPlayer : NetworkBehaviour
     private void TrackProgressChanged()
     {
         progressText.text = "Progress: " + (TrackProgress * 100).ToString("F0") + "%";
+        leaderboardEntry.UpdateProgress(progressText.text);
     }
     //[Networked] public TickTimer FinishTime { get; set; }
 
@@ -46,7 +48,7 @@ public class NetworkPlayer : NetworkBehaviour
         }
 
         Debug.Log($"{PlayerName} spawned at {transform.position}");
-        UIManager.Instance.HandlePlayerJoined(/*Object.InputAuthority,*/ this);
+        UIManager.Instance.HandlePlayerJoined(this, out leaderboardEntry);
     }
 
     private void OnTriggerEnter(Collider other)

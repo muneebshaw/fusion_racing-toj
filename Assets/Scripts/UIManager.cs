@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour
 
     private NetworkPlayer _localNetworkPlayer;
     //private PlayerRef _localPlayerRef;
-    private readonly List<LeaderboardEntry> _entries = new();
+    //private readonly List<LeaderboardEntry> _entries = new();
 
     private void Awake()
     {
@@ -99,20 +99,20 @@ public class UIManager : MonoBehaviour
 
     private void UpdateLeaderboard()
     {
-        var players = GetSortedPlayers();
+        //var players = GetSortedPlayers();
 
-        // Pool entries
-        while (_entries.Count < players.Count)
-        {
-            _entries.Add(Instantiate(_entryPrefab, _leaderboardContent));
-        }
+        //// Pool entries
+        //while (_entries.Count < players.Count)
+        //{
+        //    _entries.Add(Instantiate(_entryPrefab, _leaderboardContent));
+        //}
 
-        for (int i = 0; i < players.Count; i++)
-        {
-            var entry = _entries[i];
-            bool isLocal = players[i] == _localNetworkPlayer.Object.InputAuthority;
-            entry.Setup(i + 1, $"Player {players[i].PlayerId}", GetPlayerProgress(players[i]), isLocal);
-        }
+        //for (int i = 0; i < players.Count; i++)
+        //{
+        //    var entry = _entries[i];
+        //    bool isLocal = players[i] == _localNetworkPlayer.Object.InputAuthority;
+        //    entry.Setup(i + 1, $"Player {players[i].PlayerId}", /*GetPlayerProgress(players[i]),*/ isLocal);
+        //}
     }
 
     private List<PlayerRef> GetSortedPlayers()
@@ -153,18 +153,18 @@ public class UIManager : MonoBehaviour
     //    return (RaceManager.Instance._raceDuration - RaceManager.Instance.RaceTimer).ToString("F1");
     //}
 
-    private string GetPlayerProgress(PlayerRef player)
-    {
-        if (RaceManager.Instance.FinishTimes.TryGet(player, out float progress))
-        {
-            return progress.ToString("F1");
-        }
-        return "0";
-        //return (RaceManager.Instance._raceDuration - RaceManager.Instance.RaceTimer).ToString("F1");
-    }
+    //private string GetPlayerProgress(PlayerRef player)
+    //{
+    //    if (RaceManager.Instance.FinishTimes.TryGet(player, out float progress))
+    //    {
+    //        return progress.ToString("F1");
+    //    }
+    //    return "0";
+    //    //return (RaceManager.Instance._raceDuration - RaceManager.Instance.RaceTimer).ToString("F1");
+    //}
 
     private List<ReadyPlayerEntry> readyPlayerEntries = new();
-    internal void HandlePlayerJoined(NetworkPlayer netPlayer = null)
+    internal void HandlePlayerJoined(NetworkPlayer netPlayer, out LeaderboardEntry _leaderboardEntry)
     {
         if (netPlayer.HasStateAuthority)
         { 
@@ -174,10 +174,14 @@ public class UIManager : MonoBehaviour
 
         var entry = Instantiate(_readyPlayerEntry, _readyPlayersParent);
         readyPlayerEntries.Add(entry);
-
         //bool isLocal = netPlayer != null;
         //bool isReady = RaceManager.Instance.ReadyPlayers.TryGet(playerRef, out bool ready) && ready;
         entry.Setup(/*_localNetworkPlayer.PlayerName.ToString(), isLocal, */netPlayer);
+
+        _leaderboardEntry = Instantiate(_entryPrefab, _leaderboardContent);
+        _leaderboardEntry.Setup(/*i + 1,*/ netPlayer.PlayerName.ToString(), /*GetPlayerProgress(players[i]),*/ netPlayer.HasStateAuthority);
+        //_entries.Add(_leaderboardEntry);
+
     }
 
     internal void UpdateReadyPlayers()
