@@ -111,7 +111,7 @@ public class UIManager : MonoBehaviour
         {
             var entry = _entries[i];
             bool isLocal = players[i] == _localNetworkPlayer.Object.InputAuthority;
-            entry.Setup(i + 1, $"Player {players[i].PlayerId}", GetPlayerTime(players[i]), isLocal);
+            entry.Setup(i + 1, $"Player {players[i].PlayerId}", GetPlayerProgress(players[i]), isLocal);
         }
     }
 
@@ -144,13 +144,23 @@ public class UIManager : MonoBehaviour
             .ToList();
     }
 
-    private string GetPlayerTime(PlayerRef player)
+    //private string GetPlayerTime(PlayerRef player)
+    //{
+    //    if (RaceManager.Instance.FinishTimes.TryGet(player, out float time))
+    //    {
+    //        if (time > 0) return time.ToString("F1");
+    //    }
+    //    return (RaceManager.Instance._raceDuration - RaceManager.Instance.RaceTimer).ToString("F1");
+    //}
+
+    private string GetPlayerProgress(PlayerRef player)
     {
-        if (RaceManager.Instance.FinishTimes.TryGet(player, out float time))
+        if (RaceManager.Instance.FinishTimes.TryGet(player, out float progress))
         {
-            if (time > 0) return time.ToString("F1");
+            return progress.ToString("F1");
         }
-        return (RaceManager.Instance._raceDuration - RaceManager.Instance.RaceTimer).ToString("F1");
+        return "0";
+        //return (RaceManager.Instance._raceDuration - RaceManager.Instance.RaceTimer).ToString("F1");
     }
 
     private List<ReadyPlayerEntry> readyPlayerEntries = new();

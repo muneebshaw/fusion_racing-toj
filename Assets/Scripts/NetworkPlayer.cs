@@ -1,10 +1,12 @@
 using Fusion;
-using System;
+using TMPro;
 using UnityEngine;
 
 public class NetworkPlayer : NetworkBehaviour
 {
     [Networked, OnChangedRender(nameof(ReadinessChanged))] public bool IsReady { get; set; }
+
+    [SerializeField] private TextMeshProUGUI progressText;
 
     private void ReadinessChanged()
     {
@@ -18,13 +20,20 @@ public class NetworkPlayer : NetworkBehaviour
     }
 
     [Networked] public NetworkString<_16> PlayerName { get; set; }
+    [Networked, OnChangedRender(nameof(TrackProgressChanged))] public float TrackProgress { get; set; }
+    private void TrackProgressChanged()
+    {
+        progressText.text = "Progress: " + (TrackProgress * 100).ToString("F0") + "%";
+    }
     //[Networked] public TickTimer FinishTime { get; set; }
 
     internal ArcadeCarController carController;
+    private SplineFollower splineFollower;
 
     public override void Spawned()
     {
         carController = GetComponent<ArcadeCarController>();
+        splineFollower = GetComponent<SplineFollower>();
 
         if (HasStateAuthority)
         {
@@ -46,7 +55,6 @@ public class NetworkPlayer : NetworkBehaviour
 
         if (other.CompareTag("FinishLine"))
         {
-            //RaceManager.Instance.RPC_RegisterFinish(Object.InputAuthority);
             RPC_RequestFinish(Object.InputAuthority);
         }
     }
@@ -61,46 +69,39 @@ public class NetworkPlayer : NetworkBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (HasStateAuthority)
+        {
+            TrackProgress = splineFollower.GetDistanceAlongSpline();
+            //Debug.Log($"TrackProgress: {TrackProgress}");
+        }
+    }
+
 
     internal void SetReady(bool _isReady)
     {
         IsReady = _isReady;
-        //RaceManager.Instance.RPC_SetPlayerReady(Object.InputAuthority, _isReady);
         Debug.Log($"SetReady: {_isReady}");
-        //RPC_RequestReadinessChange(Object.InputAuthority, _isReady);
     }
 
     [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     public void RPC_RequestRegistration(PlayerRef player)
     {
         // Host receives this RPC and registers the player via RaceManager
-        Debug.LogError($"RPC_RequestRegistration: {player} PlayerName:{PlayerName}");
         if (RaceManager.IsHost)
         {
-            Debug.LogError($"RPC_RequestRegistration2: {player} PlayerName:{PlayerName}");
             RaceManager.Instance.RegisterPlayer(player);
         }
     }
 
-    //[Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
-    //public void RPC_RequestReadinessChange(PlayerRef player, bool _isReady)
-    //{
-    //    Debug.LogError($"RPC_RequestReadinessChange: {player} IsReady:{_isReady}");
-    //    if (RaceManager.Instance != null)
-    //    {
-    //        Debug.LogError($"RPC_RequestReadinessChange2: {player} IsReady:{_isReady}");
-    //        RaceManager.Instance.RPC_SetPlayerReady(player, _isReady);
-    //    }
-    //}
-
     [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     public void RPC_RequestFinish(PlayerRef player)
     {
-        Debug.LogError($"RPC_RequestFinish: {PlayerName}");
+        Debug.Log($"RPC_RequestFinish: {PlayerName}");
         if (RaceManager.IsHost)
         {
             RaceManager.Instance.RegisterFinish(player);
         }
     }
-
 }

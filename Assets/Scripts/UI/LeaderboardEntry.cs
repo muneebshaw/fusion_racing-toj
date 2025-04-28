@@ -6,14 +6,14 @@ public class LeaderboardEntry : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _positionText;
     [SerializeField] private TextMeshProUGUI _nameText;
-    [SerializeField] private TextMeshProUGUI _timeText;
+    [SerializeField] private TextMeshProUGUI _progressText;
     [SerializeField] private Image _background;
 
-    public void Setup(int position, string playerName, string time, bool isLocal = default)
+    public void Setup(int position, string playerName, string progress, bool isLocal = default)
     {
         _positionText.text = position.ToString();
         _nameText.text = playerName;
-        _timeText.text = time;
+        //_progressText.text = progress;
         if (isLocal)
         {
             _background.color = Color.red;
