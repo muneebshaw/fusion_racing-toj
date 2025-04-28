@@ -129,6 +129,9 @@ GameObject:
   m_Component:
   - component: {fileID: 133515535}
   - component: {fileID: 133515534}
+  - component: {fileID: 133515538}
+  - component: {fileID: 133515537}
+  - component: {fileID: 133515536}
   m_Layer: 0
   m_Name: Spline
   m_TagString: Untagged
@@ -171,75 +174,75 @@ MonoBehaviour:
       TangentIn:
         x: -0
         y: -0
-        z: -2.502703
+        z: -2.1467428
       TangentOut:
         x: 0
         y: 0
-        z: 2.502703
+        z: 2.1467428
       Rotation:
         value:
-          x: 0
-          y: 0.9994005
-          z: 0
-          w: -0.034621276
+          x: 0.000461407
+          y: 0.039626054
+          z: -0.00012056884
+          w: 0.9992144
     - Position:
-        x: -1.7318964
-        y: 0
-        z: -24.967033
+        x: 1.7
+        y: -0.02000001
+        z: 21.4
       TangentIn:
         x: 0
         y: 0
-        z: -10.353636
+        z: -7.9630394
       TangentOut:
         x: 0
         y: 0
-        z: 10.353636
+        z: 7.9630394
       Rotation:
         value:
           x: 0
-          y: 0.9595022
+          y: 0.06291473
           z: 0
-          w: -0.281701
+          w: 0.99801886
     - Position:
-        x: -33.777245
-        y: 0
-        z: -34.588318
+        x: 19.6
+        y: -0.02000001
+        z: 35.7
       TangentIn:
         x: 0
         y: 0
-        z: -9.081673
+        z: -10.381799
       TangentOut:
         x: 0
         y: 0
-        z: 9.081673
+        z: 10.381799
       Rotation:
         value:
           x: 0
-          y: -0.2735984
-          z: -0
-          w: 0.96184397
+          y: 0.812043
+          z: 0
+          w: 0.58359766
     - Position:
-        x: -38.57689
+        x: 35.25
         y: 0
-        z: 2.1634567
+        z: -10.01
       TangentIn:
         x: 0
         y: 0
-        z: -6.4638605
+        z: -14.360674
       TangentOut:
         x: 0
         y: 0
-        z: 6.4638605
+        z: 14.360674
       Rotation:
         value:
           x: 0
-          y: 0.23900679
+          y: 0.9992917
           z: 0
-          w: 0.9710179
+          w: -0.03762943
     - Position:
-        x: -16.506256
+        x: 16.81
         y: 0
-        z: 27.108223
+        z: -20.44
       TangentIn:
         x: 0
         y: 0
@@ -284,13 +287,97 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133515533}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.64156246, y: -0.5, z: -0.14832377}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.48, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 931992757}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &133515536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133515533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 222dc08d484f16869bdd89edd9d368fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Container: {fileID: 133515534}
+  m_TargetMesh: {fileID: 0}
+  m_RebuildOnSplineChange: 1
+  m_RebuildFrequency: 30
+  m_UpdateColliders: 0
+  m_Sides: 8
+  m_SegmentsPerUnit: 4
+  m_Capped: 1
+  m_Radius: 1
+  m_Range: {x: 0, y: 1}
+  m_FlipNormals: 0
+  m_Shape:
+    rid: 3359287791421489215
+  references:
+    version: 2
+    RefIds:
+    - rid: 3359287791421489215
+      type: {class: Road, ns: UnityEngine.Splines.ExtrusionShapes, asm: Unity.Splines}
+      data: 
+--- !u!23 &133515537
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133515533}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: c23deacb4c7febc42bba5cb20f86950c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &133515538
+MeshFilter:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133515533}
+  m_Mesh: {fileID: 0}
 --- !u!1 &161623952
 GameObject:
   m_ObjectHideFlags: 0
@@ -1717,6 +1804,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1755055325}
+  - {fileID: 133515535}
   - {fileID: 1830312635}
   - {fileID: 161623956}
   - {fileID: 1648266315}
@@ -1867,7 +1955,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1114864184
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1943,7 +2031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1157935993
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2235,7 +2323,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1450262969
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2360,7 +2448,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1546131291
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3033,5 +3121,4 @@ SceneRoots:
   - {fileID: 966350248}
   - {fileID: 1477715215}
   - {fileID: 2081572151}
-  - {fileID: 133515535}
   - {fileID: 629042634}

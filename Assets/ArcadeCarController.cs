@@ -1,5 +1,4 @@
 using Fusion;
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
