@@ -16,12 +16,14 @@ public class UIManager : MonoBehaviour
 
     [Header("In-Game UI")]
     [SerializeField] private GameObject _racePanel;
-    [SerializeField] private TextMeshProUGUI _raceTimer;
+    [SerializeField] private Transform _leaderboardContent;
+    [SerializeField] private LeaderboardEntry _entryPrefab;
+    //[SerializeField] private TextMeshProUGUI _raceTimer;
 
     [Header("Finish UI")]
     [SerializeField] private GameObject _finishPanel;
-    [SerializeField] private LeaderboardEntry _entryPrefab;
-    [SerializeField] private Transform _leaderboardContent;
+    [SerializeField] private Transform finishScreenLeaderboardParent;
+    [SerializeField] private FinishLeaderboardEntry _finishLeaderboardEntry;
 
     private NetworkPlayer _localNetworkPlayer;
     //private PlayerRef _localPlayerRef;
@@ -52,7 +54,14 @@ public class UIManager : MonoBehaviour
     private void RaceEnd()
     {
         _finishPanel.SetActive(RaceManager.Instance.CurrentState == RaceState.Finished);
-        _leaderboardContent.SetParent(_finishPanel.transform);
+        //_leaderboardContent.SetParent(_finishPanel.transform);
+
+        for (int i = 0; i < RaceManager.Instance.FinishTimes.Count; i++)
+        {
+            var entry = Instantiate(_finishLeaderboardEntry, finishScreenLeaderboardParent);
+            var finishTime = RaceManager.Instance.FinishTimes.ElementAt(i);
+            entry.SetData(i + 1, finishTime.Key.PlayerId.ToString(), finishTime.Value.ToString());
+        }
     }
 
     public void HandleRestartButton() // called from UI
@@ -73,7 +82,7 @@ public class UIManager : MonoBehaviour
 
         UpdateUIState();
         UpdateInGameUI();
-        UpdateLeaderboard();
+        //UpdateLeaderboard();
     }
 
     private void UpdateUIState()
@@ -91,58 +100,58 @@ public class UIManager : MonoBehaviour
         {
             _countdownText.text = Mathf.CeilToInt(RaceManager.Instance.CountdownTimer).ToString();
         }
-        else if (RaceManager.Instance.CurrentState == RaceState.Racing)
-        {
-            _raceTimer.text = RaceManager.Instance.RaceTimer.ToString("F1");
-        }
-    }
-
-    private void UpdateLeaderboard()
-    {
-        //var players = GetSortedPlayers();
-
-        //// Pool entries
-        //while (_entries.Count < players.Count)
+        //else if (RaceManager.Instance.CurrentState == RaceState.Racing)
         //{
-        //    _entries.Add(Instantiate(_entryPrefab, _leaderboardContent));
-        //}
-
-        //for (int i = 0; i < players.Count; i++)
-        //{
-        //    var entry = _entries[i];
-        //    bool isLocal = players[i] == _localNetworkPlayer.Object.InputAuthority;
-        //    entry.Setup(i + 1, $"Player {players[i].PlayerId}", /*GetPlayerProgress(players[i]),*/ isLocal);
+        //    _raceTimer.text = RaceManager.Instance.RaceTimer.ToString("F1");
         //}
     }
 
-    private List<PlayerRef> GetSortedPlayers()
-    {
-        if (RaceManager.Instance == null || RaceManager.Instance.Runner == null)
-            return new List<PlayerRef>();
+    //private void UpdateLeaderboard()
+    //{
+    //    //var players = GetSortedPlayers();
 
-        // Create a dictionary to map PlayerRefs to their NetworkPlayer instances
-        var playerMap = new Dictionary<PlayerRef, NetworkPlayer>();
-        foreach (var np in FindObjectsByType<NetworkPlayer>(FindObjectsSortMode.None))
-        {
-            playerMap[np.Object.InputAuthority] = np;
-        }
+    //    //// Pool entries
+    //    //while (_entries.Count < players.Count)
+    //    //{
+    //    //    _entries.Add(Instantiate(_entryPrefab, _leaderboardContent));
+    //    //}
 
-        return RaceManager.Instance.Runner.ActivePlayers
-            .OrderByDescending(p => RaceManager.Instance.FinishTimes.ContainsKey(p)) // Finished players first
-            .ThenBy(p =>
-            {
-                // For finished players: sort by finish time
-                if (RaceManager.Instance.FinishTimes.TryGet(p, out float time))
-                    return time;
+    //    //for (int i = 0; i < players.Count; i++)
+    //    //{
+    //    //    var entry = _entries[i];
+    //    //    bool isLocal = players[i] == _localNetworkPlayer.Object.InputAuthority;
+    //    //    entry.Setup(i + 1, $"Player {players[i].PlayerId}", /*GetPlayerProgress(players[i]),*/ isLocal);
+    //    //}
+    //}
 
-                // For racing players: sort by distance to finish line
-                if (playerMap.TryGetValue(p, out NetworkPlayer np))
-                    return RaceManager.Instance.GetDistanceToFinish(np.transform.position);
+    //private List<PlayerRef> GetSortedPlayers()
+    //{
+    //    if (RaceManager.Instance == null || RaceManager.Instance.Runner == null)
+    //        return new List<PlayerRef>();
 
-                return float.MaxValue; // Fallback for missing players
-            })
-            .ToList();
-    }
+    //    // Create a dictionary to map PlayerRefs to their NetworkPlayer instances
+    //    var playerMap = new Dictionary<PlayerRef, NetworkPlayer>();
+    //    foreach (var np in FindObjectsByType<NetworkPlayer>(FindObjectsSortMode.None))
+    //    {
+    //        playerMap[np.Object.InputAuthority] = np;
+    //    }
+
+    //    return RaceManager.Instance.Runner.ActivePlayers
+    //        .OrderByDescending(p => RaceManager.Instance.FinishTimes.ContainsKey(p)) // Finished players first
+    //        .ThenBy(p =>
+    //        {
+    //            // For finished players: sort by finish time
+    //            if (RaceManager.Instance.FinishTimes.TryGet(p, out float time))
+    //                return time;
+
+    //            // For racing players: sort by distance to finish line
+    //            if (playerMap.TryGetValue(p, out NetworkPlayer np))
+    //                return RaceManager.Instance.GetDistanceToFinish(np.transform.position);
+
+    //            return float.MaxValue; // Fallback for missing players
+    //        })
+    //        .ToList();
+    //}
 
     //private string GetPlayerTime(PlayerRef player)
     //{

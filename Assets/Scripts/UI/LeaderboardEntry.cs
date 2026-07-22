@@ -4,7 +4,7 @@ using TMPro;
 
 public class LeaderboardEntry : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _positionText;
+    //[SerializeField] private TextMeshProUGUI _positionText;
     [SerializeField] private TextMeshProUGUI _nameText;
     [SerializeField] private TextMeshProUGUI _progressText;
     [SerializeField] private Image _background;

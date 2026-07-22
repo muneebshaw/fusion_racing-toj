@@ -93,7 +93,7 @@ public class NetworkPlayer : NetworkBehaviour
         // Host receives this RPC and registers the player via RaceManager
         if (RaceManager.IsHost)
         {
-            RaceManager.Instance.RegisterPlayer(player);
+            RaceManager.Instance.RegisterPlayer(player, this);
         }
     }
 

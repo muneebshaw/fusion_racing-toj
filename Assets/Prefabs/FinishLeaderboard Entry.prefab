@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1838364026907791130}
   - component: {fileID: 3316589221704383428}
   m_Layer: 5
-  m_Name: Text (TMP) - Completion
+  m_Name: Text (TMP) - Time
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -10, y: 0}
-  m_SizeDelta: {x: 267.108, y: 0}
+  m_SizeDelta: {x: 169.8839, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &1838364026907791130
 CanvasRenderer:
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Progress: 699%'
+  m_text: 60s
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -153,7 +153,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3072082468005719907
 RectTransform:
   m_ObjectHideFlags: 0
@@ -170,7 +170,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 10, y: 0}
   m_SizeDelta: {x: 74.1727, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4249345666486214960
@@ -306,8 +306,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 10, y: 0}
-  m_SizeDelta: {x: 235.3889, y: 0}
+  m_AnchoredPosition: {x: 91.60095, y: 0}
+  m_SizeDelta: {x: 316.3229, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &3545632499525117908
 CanvasRenderer:
@@ -419,9 +419,9 @@ GameObject:
   - component: {fileID: 1207081782344629402}
   - component: {fileID: 1007581416123244718}
   - component: {fileID: 3841479848128076878}
-  - component: {fileID: 5762943245024466392}
+  - component: {fileID: 7608427471389068852}
   m_Layer: 5
-  m_Name: Leaderboard Entry
+  m_Name: FinishLeaderboard Entry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -487,7 +487,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5762943245024466392
+--- !u!114 &7608427471389068852
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -496,10 +496,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8814813071160963951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a8510892979e2e45be459b427018fa6, type: 3}
+  m_Script: {fileID: 11500000, guid: 4871c0f3d6ba2404788a2ab3262a1559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _positionText: {fileID: 1841172045908859101}
-  _nameText: {fileID: 2371692417933250118}
-  _progressText: {fileID: 3316589221704383428}
-  _background: {fileID: 3841479848128076878}
+  _position: {fileID: 1841172045908859101}
+  _playerName: {fileID: 2371692417933250118}
+  _time: {fileID: 3316589221704383428}

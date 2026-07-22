@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using System.Linq;
 using UnityEngine;
@@ -13,6 +14,9 @@ public class RaceManager : NetworkBehaviour
 
     [Networked, Capacity(4)]
     public NetworkDictionary<PlayerRef, float> FinishTimes { get; }
+
+    [Networked, Capacity(4)]
+    public NetworkLinkedList<NetworkPlayer> Progresses { get; }
 
     [Networked, Capacity(4)]
     public NetworkDictionary<PlayerRef, bool> ReadyPlayers { get; }
@@ -85,18 +89,18 @@ public class RaceManager : NetworkBehaviour
         }
     }
 
-    private void OnGUI()
-    {
-        if (Runner && Runner.IsSharedModeMasterClient)
-        {
-            var readyPlayers = ReadyPlayers.Where(p => p.Value).Select(p => p.Key.PlayerId).ToList();
+    //private void OnGUI()
+    //{
+    //    if (Runner && Runner.IsSharedModeMasterClient)
+    //    {
+    //        var readyPlayers = ReadyPlayers.Where(p => p.Value).Select(p => p.Key.PlayerId).ToList();
 
-            GUI.Label(new Rect(400, 10, 300, 20), $"CurrentState: {CurrentState}");
-            GUI.Label(new Rect(400, 50, 300, 20), $"ReadyPlayers: {readyPlayers.Count}");
-            GUI.Label(new Rect(400, 90, 300, 20), $"Runner.ActivePlayers: {Runner.ActivePlayers.Count()}");
-            GUI.Label(new Rect(400, 130, 300, 20), $"FinishTimes: {FinishTimes.Count}");
-        }
-    }
+    //        GUI.Label(new Rect(400, 10, 300, 20), $"CurrentState: {CurrentState}");
+    //        GUI.Label(new Rect(400, 50, 300, 20), $"ReadyPlayers: {readyPlayers.Count}");
+    //        GUI.Label(new Rect(400, 90, 300, 20), $"Runner.ActivePlayers: {Runner.ActivePlayers.Count()}");
+    //        GUI.Label(new Rect(400, 130, 300, 20), $"FinishTimes: {FinishTimes.Count}");
+    //    }
+    //}
 
     //private void CheckAllReady()
     //{
@@ -144,10 +148,14 @@ public class RaceManager : NetworkBehaviour
     }
 
 
-    internal void RegisterPlayer(PlayerRef player)
+    internal void RegisterPlayer(PlayerRef player, NetworkPlayer networkPlayer)
     {
         Debug.Log($"RPC_RegisterPlayer {player.PlayerId}");
         FinishTimes.Set(player, 0);
+        if (!Progresses.Contains(networkPlayer))
+        {
+            Progresses.Add(networkPlayer);
+        }
         ReadyPlayers.Set(player, false);
     }
 
@@ -183,8 +191,8 @@ public class RaceManager : NetworkBehaviour
         }
     }
 
-    public float GetDistanceToFinish(Vector3 position)
-    {
-        return Vector3.Distance(position, _finishLine.position);
-    }
+    //public float GetDistanceToFinish(Vector3 position)
+    //{
+    //    return Vector3.Distance(position, _finishLine.position);
+    //}
 }
